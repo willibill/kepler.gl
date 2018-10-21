@@ -46,6 +46,7 @@ export const arctVisConfigs = {
   colorRange: 'colorRange',
   sizeRange: 'strokeWidthRange',
   targetColor: 'targetColor',
+  enableAnimation: 'enableAnimation',
   'hi-precision': 'hi-precision'
 };
 
@@ -255,7 +256,7 @@ export default class ArcLayer extends Layer {
         opacity: this.config.visConfig.opacity,
         pickedColor: this.config.highlightColor,
         strokeScale: this.config.visConfig.thickness,
-
+        enableAnimation: this.config.visConfig.enableAnimation,
         // parameters
         parameters: {depthTest: mapState.dragRotate},
 

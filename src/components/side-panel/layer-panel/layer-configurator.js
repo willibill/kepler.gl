@@ -479,6 +479,12 @@ export default class LayerConfigurator extends Component {
           {...LAYER_VIS_CONFIGS['hi-precision']}
           {...visConfiguratorProps}
         />
+
+        {/* animation */}
+        <LayerConfigGroup
+          {...LAYER_VIS_CONFIGS.enableAnimation}
+          {...visConfiguratorProps}
+        />
       </StyledLayerVisualConfigurator>
     );
   }

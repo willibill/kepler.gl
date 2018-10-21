@@ -27,6 +27,7 @@ import {GL} from 'luma.gl';
 import {registerShaderModules, setParameters} from 'luma.gl';
 import pickingModule from 'shaderlib/picking-module';
 import brushingModule from 'shaderlib/brushing-module';
+import animationModule from 'shaderlib/animation-module';
 
 // components
 import MapPopoverFactory from 'components/map/map-popover';
@@ -119,7 +120,7 @@ export default function MapContainerFactory(MapPopover, MapControl) {
 
     _onWebGLInitialized = gl => {
       registerShaderModules(
-        [pickingModule, brushingModule], {
+        [pickingModule, brushingModule, animationModule], {
           ignoreMultipleRegistrations: true
       });
 

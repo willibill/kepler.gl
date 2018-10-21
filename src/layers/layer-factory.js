@@ -315,6 +315,14 @@ export const LAYER_VIS_CONFIGS = {
     step: 0.1,
     group: PROPERTY_GROUPS.cell,
     property: 'radius'
+  },
+
+  enableAnimation: {
+    type: 'boolean',
+    defaultValue: false,
+    label: 'Enable Animation',
+    group: PROPERTY_GROUPS.height,
+    property: 'enableAnimation'
   }
 };
 
