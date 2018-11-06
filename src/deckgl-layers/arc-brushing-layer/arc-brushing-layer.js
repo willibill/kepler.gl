@@ -35,16 +35,7 @@ const defaultProps = {
   mousePosition: [0, 0]
 };
 
-const NUM_SEGMENTS = 100;
-
-// function addAnimationVsShader(vs) {
-//   return editShader(
-//     vs,
-//     'arc animation vs',
-//     'uniform float numSegments;',
-//     'uniform float numSegments; uniform float enableAnimation; uniform float currentStep;'
-//   );
-// }
+const NUM_SEGMENTS = 50;
 
 function addAnimationVsSeg(vs) {
   return editShader(
@@ -57,6 +48,7 @@ function addAnimationVsSeg(vs) {
      float segmentIndex = mix(currentStep, segIndex, showPt);`
   )
 }
+
 function addBrushingVsShader(vs) {
   return editShader(
     vs,
@@ -101,7 +93,9 @@ export default class ArcBrushingLayer extends ArcLayer {
   updateState({props, oldProps, changeFlags}) {
     super.updateState({props, oldProps, changeFlags});
 
-    if (!oldProps.enableAnimation && props.enableAnimation && !this.state.isAnimating && !this.state.timerId) {
+    if ( props.enableAnimation &&
+      // !oldProps.enableAnimation &&
+      !this.state.isAnimating && !this.state.timerId) {
       this.startAnimation();
     } else if (!props.enableAnimation && this.state.isAnimating) {
       this.stopAnimation();
