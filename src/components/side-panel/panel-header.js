@@ -150,52 +150,64 @@ const PanelItem = ({onClose, onClickHandler, label, icon}) => (
   </div>
 );
 
-export const SaveExportDropdown = ({
-  onExportImage,
-  onExportData,
-  onExportConfig,
-  onSaveMap,
-  show,
-  onClose
-}) => {
-  return (
-    <StyledPanelDropdown show={show} className="save-export-dropdown">
-      <ClickOutsideCloseDropdown className="save-export-dropdown__inner"
-        show={show}
-        onClose={onClose}>
-        <PanelItem
-          label="Export Image"
-          onClickHandler={onExportImage}
-          onClose={onClose}
-          icon={(<Picture height="16px" />)}
-        />
 
-        <PanelItem
-          label="Export Data"
-          onClickHandler={onExportData}
-          onClose={onClose}
-          icon={(<Files height="16px" />)}
-        />
+export const SaveMapPanelFactory = () => {
+  const SaveMapPanel = ({onSaveMap, onClose, label}) =>
+    onSaveMap ? <PanelItem
+    label={label || 'Save Map Url'}
+    onClickHandler={onSaveMap}
+    onClose={onClose}
+    icon={(<Share height="16px" />)}
+  /> : null
 
-        <PanelItem
-          label="Export Config"
-          onClickHandler={onExportConfig}
-          onClose={onClose}
-          icon={(<CodeAlt height="16px" />)}
-        />
+  return SaveMapPanel;
+}
 
-        {onSaveMap ? (
+export const SaveExportDropdownFactory = (SaveMapPanel) => {
+  const SaveExportDropdown = ({
+    onExportImage,
+    onExportData,
+    onExportConfig,
+    onSaveMap,
+    show,
+    onClose
+  }) => {
+    return (
+     <StyledPanelDropdown show={show} className="save-export-dropdown">
+        <ClickOutsideCloseDropdown className="save-export-dropdown__inner"
+          show={show}
+          onClose={onClose}>
           <PanelItem
-            label="Save Map Url"
+            label="Export Image"
+            onClickHandler={onExportImage}
+            onClose={onClose}
+            icon={(<Picture height="16px" />)}
+          />
+
+          <PanelItem
+            label="Export Data"
+            onClickHandler={onExportData}
+            onClose={onClose}
+            icon={(<Files height="16px" />)}
+          />
+
+          <PanelItem
+            label="Export Config"
+            onClickHandler={onExportConfig}
+            onClose={onClose}
+            icon={(<CodeAlt height="16px" />)}
+          />
+          <SaveMapPanel
             onClickHandler={onSaveMap}
             onClose={onClose}
-            icon={(<Share height="16px" />)}
           />
-        ) : null}
-      </ClickOutsideCloseDropdown>
-    </StyledPanelDropdown>
-  );
-};
+        </ClickOutsideCloseDropdown>
+      </StyledPanelDropdown>
+    );
+  };
+
+  return SaveExportDropdown;
+}
 
 const defaultActionItems = [
   {
