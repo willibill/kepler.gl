@@ -595,7 +595,7 @@ export default class Layer {
   getLightSettingsFromBounds(bounds) {
 
     if (Array.isArray(bounds) && bounds.length >= 4) {
-      // -90 will project into infinite
+      // +-90 will project into infinite
       const clampBounds = [
         clamp([-180, 180], bounds[0]),
         clamp([-89, 89], bounds[1]),
