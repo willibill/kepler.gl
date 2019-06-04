@@ -42,7 +42,8 @@ import {
   getSampleData,
   getLatLngBounds,
   maybeToDate,
-  getSortingFunction
+  getSortingFunction,
+  clamp
 } from 'utils/data-utils';
 
 import {
@@ -592,17 +593,27 @@ export default class Layer {
   }
 
   getLightSettingsFromBounds(bounds) {
-    return Array.isArray(bounds) && bounds.length >= 4
-      ? {
-          ...DEFAULT_LIGHT_SETTINGS,
-          lightsPosition: [
-            ...bounds.slice(0, 2),
-            DEFAULT_LIGHT_SETTINGS.lightsPosition[2],
-            ...bounds.slice(2, 4),
-            DEFAULT_LIGHT_SETTINGS.lightsPosition[5]
-          ]
-        }
-      : DEFAULT_LIGHT_SETTINGS;
+
+    if (Array.isArray(bounds) && bounds.length >= 4) {
+      // -90 will project into infinite
+      const clampBounds = [
+        clamp([-180, 180], bounds[0]),
+        clamp([-89, 89], bounds[1]),
+        clamp([-180, 180], bounds[2]),
+        clamp([-89, 89], bounds[3])
+      ];
+      return {
+        ...DEFAULT_LIGHT_SETTINGS,
+        lightsPosition: [
+          ...clampBounds.slice(0, 2),
+          DEFAULT_LIGHT_SETTINGS.lightsPosition[2],
+          ...clampBounds.slice(2, 4),
+          DEFAULT_LIGHT_SETTINGS.lightsPosition[5]
+        ]
+      }
+    }
+
+    return DEFAULT_LIGHT_SETTINGS;
   }
 
   getEncodedChannelValue(

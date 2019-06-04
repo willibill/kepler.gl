@@ -22,7 +22,7 @@ import geojsonExtent from '@mapbox/geojson-extent';
 import wktParser from 'wellknown';
 import normalize from '@mapbox/geojson-normalize';
 
-import {getSampleData} from 'utils/data-utils';
+import {getSampleData, clamp} from 'utils/data-utils';
 
 /**
  * Parse raw data to geojson feature
@@ -143,10 +143,17 @@ export function getGeojsonBounds(features = []) {
   );
 
   try {
-    return geojsonExtent({
+    const bounds = geojsonExtent({
       type: 'FeatureCollection',
       features: nonEmpty
     });
+
+    return [
+      clamp([-180, 180], bounds[0]),
+      clamp([-90, 90], bounds[1]),
+      clamp([-180, 180], bounds[2]),
+      clamp([-90, 90], bounds[3])
+    ];
   } catch (e) {
     return null;
   }
