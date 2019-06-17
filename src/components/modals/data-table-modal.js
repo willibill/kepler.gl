@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React, {Component, PureComponent} from 'react';
+import React, {Component} from 'react';
 import {createSelector} from 'reselect';
 import styled from 'styled-components';
 import {VariableSizeGrid as Grid} from 'react-window';
@@ -38,6 +38,9 @@ const COLUMN_SIZE = {
   [ALL_FIELD_TYPES.point]: 150,
   [ALL_FIELD_TYPES.string]: 150
 };
+
+const DEFAULT_COLUMN_WIDTH = 100;
+const HEADER_HEIGHT = 72;
 
 const dgSettings = {
   sidePadding: 36,
@@ -74,32 +77,41 @@ const tagContainerStyle = {
   alignItems: 'center'
 };
 
-class ItemRenderer extends PureComponent {
-  render() {
-    const {columnIndex, data, rowIndex, style} = this.props;
+const HeaderRenderer = React.memo(({columnIndex, data, rowIndex, style}) => {
+  const item = data[columnIndex];
 
-    const item = data[rowIndex][columnIndex];
-
-    return rowIndex === 0 ? (
-        <FieldHeader
-          key={`${rowIndex}-${columnIndex}`}
-          className="header"
-          style={style}
-          name={item.name}
-          type={item.type}
-        />
-      ) : (
-        <div
-          className="cell"
-          style={style}
-          key={`${rowIndex}-${columnIndex}`}>
-          {item}
+  return (
+    <div className="header" style={{...style, ...tagContainerStyle}}>
+      <div style={{display: 'flex', alignItems: 'center'}}>
+        <div>
+          {item.type === 'timestamp' ? <Clock height="16px" /> : null}
         </div>
-      );
-  }
-}
+        {item.name}
+      </div>
+      <div>
+        <FieldToken type={item.type} />
+      </div>
+    </div>
+  );
+});
+
+const CellRenderer = React.memo(({columnIndex, data, rowIndex, style}) => {
+  const item = data[rowIndex][columnIndex];
+
+  return (
+    <div
+      className="cell"
+      style={style}
+      key={`${rowIndex}-${columnIndex}`}>
+      {item}
+    </div>
+  );
+});
 
 export class DataTableModal extends Component {
+
+  headerGrid = React.createRef();
+
   datasetsSelector = props => props.datasets;
   dataIdSelector = props => props.dataId;
   activeDatasetSelector = createSelector(
@@ -115,14 +127,11 @@ export class DataTableModal extends Component {
     this.activeDatasetSelector,
     dataset => dataset.data
   );
-  dataSelector = createSelector(
-    this.columnsSelector,
-    this.rowsSelector,
-    (columns, rows) => [
-      columns,
-      ...rows
-    ]
-  );
+
+  headerRowHeight = () => 72;
+  cellRowHeight = () => 48;
+  columnWidth = index => COLUMN_SIZE[this.columnsSelector(this.props)[index].type] || DEFAULT_COLUMN_WIDTH;
+  onRowScrolling = ({scrollLeft}) => this.headerGrid.current.scrollTo({scrollLeft});
 
   render() {
     const {showDatasetTable} = this.props;
@@ -137,7 +146,6 @@ export class DataTableModal extends Component {
     const activeDataset = this.activeDatasetSelector(this.props);
     const columns = this.columnsSelector(this.props);
     const rows = this.rowsSelector(this.props);
-    const data = this.dataSelector(this.props);
 
     return (
       <StyledModal className="dataset-modal" >
@@ -148,39 +156,51 @@ export class DataTableModal extends Component {
         />
         <Autosizer>
           {({height, width}) => (
-            <Grid
-              columnCount={columns.length}
-              columnWidth={index =>
-                COLUMN_SIZE[columns[index].type] || 100
-              }
-              height={height - dgSettings.height - dgSettings.verticalPadding}
-              rowCount={rows.length + 1}
-              rowHeight={index => index === 0 ? 72 : 48}
-              width={width}
-              itemData={data}
-            >
-              {ItemRenderer}
-            </Grid>
+            [
+              <Grid
+                className="headers"
+                columnCount={columns.length}
+                columnWidth={this.columnWidth}
+                height={HEADER_HEIGHT}
+                rowCount={1}
+                rowHeight={this.headerRowHeight}
+                width={width}
+                itemData={columns}
+                // hold onto a reference to the header grid component
+                // so we can set the scroll position later
+                ref={this.headerGrid}
+                // hide the overflow so the scroll bar never shows
+                // in the header grid
+                style={{
+                  // disable scrolling in the header
+                  overflowX: 'hidden',
+                  overflowY: 'hidden'
+                }}
+              >
+                {HeaderRenderer}
+              </Grid>,
+              <Grid
+                className="rows"
+                columnCount={columns.length}
+                columnWidth={this.columnWidth}
+                height={height - dgSettings.height - dgSettings.verticalPadding - HEADER_HEIGHT}
+                rowCount={rows.length}
+                rowHeight={this.cellRowHeight}
+                width={width}
+                itemData={rows}
+                // When a scroll occurs in the body grid,
+                // synchronize the scroll position of the header grid
+                onScroll={this.onRowScrolling}
+              >
+                {CellRenderer}
+              </Grid>
+            ]
           )}
         </Autosizer>
       </StyledModal>
     );
   }
 }
-
-const FieldHeader = ({className, name, style, type}) => (
-  <div className={className} style={{...style, ...tagContainerStyle}}>
-    <div style={{display: 'flex', alignItems: 'center'}}>
-      <div>
-        {type === 'timestamp' ? <Clock height="16px" /> : null}
-      </div>
-      {name}
-    </div>
-    <div>
-      <FieldToken type={type} />
-    </div>
-  </div>
-);
 
 const DatasetCatalog = styled.div`
   display: flex;
@@ -202,7 +222,7 @@ export const DatasetModalTab = styled.div`
   }
 `;
 
-export const DatasetTabs = ({activeDataset, datasets, showDatasetTable}) => (
+export const DatasetTabs = React.memo(({activeDataset, datasets, showDatasetTable}) => (
   <DatasetCatalog className="dataset-modal-catalog">
     {Object.values(datasets).map(dataset => (
       <DatasetModalTab
@@ -215,7 +235,7 @@ export const DatasetTabs = ({activeDataset, datasets, showDatasetTable}) => (
       </DatasetModalTab>
     ))}
   </DatasetCatalog>
-);
+));
 
 const DataTableModalFactory = () => DataTableModal;
 export default DataTableModalFactory;
