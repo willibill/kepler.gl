@@ -5687,7 +5687,7 @@ lru-cache@^5.1.1:
   dependencies:
     yallist "^3.0.2"
 
-luma.gl@^7.0.1:
+luma.gl@^7.1.1:
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/luma.gl/-/luma.gl-7.1.1.tgz#e70afa5767ab33ed7b804ff8f9648d39d324d05b"
   integrity sha512-WPknedrcIBT2vh7mk/U5kGzWrXsRFXj+tZWffLW8eAEqDtyazNbcvoqExJqMfmdQtb6eWGPHHAMp+4uQx+1VcQ==
@@ -7332,10 +7332,6 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.2.7:
 re-emitter@^1.0.0:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/re-emitter/-/re-emitter-1.1.3.tgz#fa9e319ffdeeeb35b27296ef0f3d374dac2f52a7"
-
-react-data-grid@2.0.80-am-fix-defaultprops-warnings3337:
-  version "2.0.80-am-fix-defaultprops-warnings3337"
-  resolved "https://registry.yarnpkg.com/react-data-grid/-/react-data-grid-2.0.80-am-fix-defaultprops-warnings3337.tgz#a822e6266f828e66946827e69ee7ea5ba8db4bf2"
 
 react-deep-force-update@^2.1.1:
   version "2.1.3"
