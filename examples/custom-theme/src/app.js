@@ -20,8 +20,8 @@
 
 import React, {Component} from 'react';
 import styled from 'styled-components';
-import window from 'global/window';
 import {connect} from 'react-redux';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import KeplerGl from 'kepler.gl';
 
 const MAPBOX_TOKEN = process.env.MapboxAccessToken; // eslint-disable-line
@@ -62,27 +62,7 @@ const StyleSwitch = styled.div`
 
 class App extends Component {
   state = {
-    customTheme: false,
-    width: window.innerWidth,
-    height: window.innerHeight
-  };
-
-  componentWillMount() {
-    // event listeners
-    window.addEventListener('resize', this._onResize);
-
-    this._onResize();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this._onResize);
-  }
-
-  _onResize = () => {
-    this.setState({
-      width: window.innerWidth,
-      height: window.innerHeight
-    });
+    customTheme: false
   };
 
   _onToggleTheme = (event) => {
@@ -93,24 +73,29 @@ class App extends Component {
   };
 
   render() {
-    const {width, height, customTheme} = this.state;
+    const {customTheme} = this.state;
     return (
-      <div>
+      <div style={{position: 'absolute', width: '100%', height: '100%'}}>
         <StyleSwitch>
           <label htmlFor="custom-theme">Custom theme</label>
           <input type="checkbox" checked={customTheme} id="custom-theme" onChange={this._onToggleTheme}/>
         </StyleSwitch>
-        <KeplerGl
-          mapboxApiAccessToken={MAPBOX_TOKEN}
-          id="map"
-          /*
-           * Specify path to keplerGl state, because it is not mount at the root
-           */
-          getState={state => state.demo.keplerGl}
-          width={width}
-          height={height}
-          theme={customTheme ? theme : emptyTheme}
-        />
+        <AutoSizer>
+          {({height, width}) => (
+            <KeplerGl
+              mapboxApiAccessToken={MAPBOX_TOKEN}
+              id="map"
+              /*
+               * Specify path to keplerGl state, because it is not mount at the root
+               */
+              getState={state => state.demo.keplerGl}
+              width={width}
+              height={height}
+              theme={customTheme ? theme : emptyTheme}
+            />
+          )}
+        </AutoSizer>
+
       </div>
     );
   }

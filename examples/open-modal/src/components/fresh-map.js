@@ -19,7 +19,7 @@
 // THE SOFTWARE.
 
 import React, {Component} from 'react';
-import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer'
+import AutoSizer from 'react-virtualized-auto-sizer';
 import {addDataToMap, wrapTo} from 'kepler.gl/actions';
 import KeplerGl from 'kepler.gl';
 

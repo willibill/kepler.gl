@@ -21,7 +21,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {addDataToMap, wrapTo} from 'kepler.gl/actions';
-import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer'
+import AutoSizer from 'react-virtualized-auto-sizer';
 import styled from 'styled-components';
 import {theme} from 'kepler.gl/styles';
 

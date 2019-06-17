@@ -20,7 +20,7 @@
 
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer'
+import AutoSizer from 'react-virtualized-auto-sizer';
 import KeplerGl from 'kepler.gl';
 import {createAction} from 'redux-actions';
 
@@ -54,17 +54,17 @@ class App extends Component {
   render() {
     return (
       <div style={{position: 'absolute', width: '100%', height: '100%'}}>
-          <button onClick={this._toggleSidePanelVisibility}> Hide / Show Side Panel</button>
-          <AutoSizer>
-            {({height, width}) => (
-            <KeplerGl
-              mapboxApiAccessToken={MAPBOX_TOKEN}
-              id="map1"
-              width={width}
-              height={height}
-            />
-          )}
-          </AutoSizer>
+        <button onClick={this._toggleSidePanelVisibility}> Hide / Show Side Panel</button>
+        <AutoSizer>
+          {({height, width}) => (
+          <KeplerGl
+            mapboxApiAccessToken={MAPBOX_TOKEN}
+            id="map1"
+            width={width}
+            height={height}
+          />
+        )}
+        </AutoSizer>
       </div>
     );
   }
