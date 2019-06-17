@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React, {Component, PureComponent} from 'react';
+import {createSelector} from 'reselect';
 import styled from 'styled-components';
 import {VariableSizeGrid as Grid} from 'react-window';
 import Autosizer from 'react-virtualized-auto-sizer';
@@ -30,6 +31,13 @@ import {Clock} from 'components/common/icons/index';
 
 // Breakpoints
 import {media} from 'styles/media-breakpoints';
+
+const COLUMN_SIZE = {
+  [ALL_FIELD_TYPES.timestamp]: 200,
+  [ALL_FIELD_TYPES.date]: 150,
+  [ALL_FIELD_TYPES.point]: 150,
+  [ALL_FIELD_TYPES.string]: 150
+};
 
 const dgSettings = {
   sidePadding: 36,
@@ -66,20 +74,6 @@ const tagContainerStyle = {
   alignItems: 'center'
 };
 
-const FieldHeader = ({className, name, style, type}) => (
-  <div className={className} style={{...style, ...tagContainerStyle}}>
-    <div style={{display: 'flex', alignItems: 'center'}}>
-      <div>
-        {type === 'timestamp' ? <Clock height="16px" /> : null}
-      </div>
-      {name}
-    </div>
-    <div>
-      <FieldToken type={type} />
-    </div>
-  </div>
-);
-
 class ItemRenderer extends PureComponent {
   render() {
     const {columnIndex, data, rowIndex, style} = this.props;
@@ -104,30 +98,46 @@ class ItemRenderer extends PureComponent {
       );
   }
 }
-const COLUMN_SIZE = {
-  [ALL_FIELD_TYPES.timestamp]: 200,
-  [ALL_FIELD_TYPES.date]: 150,
-  [ALL_FIELD_TYPES.point]: 150,
-  [ALL_FIELD_TYPES.string]: 150
-};
 
 export class DataTableModal extends Component {
+  datasetsSelector = props => props.datasets;
+  dataIdSelector = props => props.dataId;
+  activeDatasetSelector = createSelector(
+    this.datasetsSelector,
+    this.dataIdSelector,
+    (datasets, dataId) => datasets[dataId]
+  );
+  columnsSelector = createSelector(
+    this.activeDatasetSelector,
+    dataset => dataset.fields.filter(({name}) => name !== '_geojson')
+  );
+  rowsSelector = createSelector(
+    this.activeDatasetSelector,
+    dataset => dataset.data
+  );
+  dataSelector = createSelector(
+    this.columnsSelector,
+    this.rowsSelector,
+    (columns, rows) => [
+      columns,
+      ...rows
+    ]
+  );
 
   render() {
-    const {datasets, dataId, showDatasetTable} = this.props;
+    const {showDatasetTable} = this.props;
+
+    const datasets = this.datasetsSelector(this.props);
+    const dataId = this.dataIdSelector(this.props);
 
     if (!datasets || !dataId) {
       return null;
     }
 
-    const activeDataset = datasets[dataId];
-    const rows = activeDataset.data;
-    const columns = activeDataset.fields.filter(({name}) => name !== '_geojson');
-
-    const data = [
-      columns,
-      ...rows
-    ];
+    const activeDataset = this.activeDatasetSelector(this.props);
+    const columns = this.columnsSelector(this.props);
+    const rows = this.rowsSelector(this.props);
+    const data = this.dataSelector(this.props);
 
     return (
       <StyledModal className="dataset-modal" >
@@ -157,6 +167,20 @@ export class DataTableModal extends Component {
     );
   }
 }
+
+const FieldHeader = ({className, name, style, type}) => (
+  <div className={className} style={{...style, ...tagContainerStyle}}>
+    <div style={{display: 'flex', alignItems: 'center'}}>
+      <div>
+        {type === 'timestamp' ? <Clock height="16px" /> : null}
+      </div>
+      {name}
+    </div>
+    <div>
+      <FieldToken type={type} />
+    </div>
+  </div>
+);
 
 const DatasetCatalog = styled.div`
   display: flex;
