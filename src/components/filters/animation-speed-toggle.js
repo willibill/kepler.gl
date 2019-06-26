@@ -51,8 +51,8 @@ class AnimationSpeedToggle extends Component {
         <SliderWrapper>
           <Slider
             minValue={0}
-            maxValue={10}
-            step={0.1}
+            maxValue={100}
+            step={0.01}
             value1={speed}
             onSlider1Change={updateAnimationSpeed}
             isRanged={false}
