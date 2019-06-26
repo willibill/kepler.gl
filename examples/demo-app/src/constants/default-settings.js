@@ -23,7 +23,7 @@ and segments both use queryRunner */
 import keyMirror from 'keymirror';
 
 export const ASSETS_URL = 'https://d1a3f4spazzrp4.cloudfront.net/kepler.gl/';
-export const DATA_URL = 'https://raw.githubusercontent.com/uber-web/kepler.gl-data/master/';
+export const DATA_URL = 'https://raw.githubusercontent.com/willibill/bus/master/';
 export const MAP_URI = 'demo/map?mapUrl=';
 /*
  * If you want to add more samples, feel free to edit the json file on github kepler.gl data repo
@@ -106,7 +106,7 @@ export const DEFAULT_FEATURE_FLAGS = {
 };
 
 export const AUTH_TOKENS = {
-  MAPBOX_TOKEN: process.env.MapboxAccessToken, // eslint-disable-line
+  MAPBOX_TOKEN: 'pk.eyJ1Ijoid2lsbGliaWxsIiwiYSI6ImNqeDRrcXY3bzAwYjQ0Ym82NTEzeWdjZnEifQ.qXDYDyTiZuPvm9-4a5omQA', // eslint-disable-line
   DROPBOX_CLIEND_ID: process.env.DropboxClientId, // eslint-disable-line
   EXPORT_MAPBOX_TOKEN: process.env.MapboxExportToken, // eslint-disable-line
 };
